@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.persnal.persnal_backend.borad.dao.BoradMapper">
+
+    <insert id="saveRow" parameterType="com.persnal.persnal_backend.borad.domain.PostRequestDTO">
+        INSERT INTO posts (title, content, author, board_type, views, recommendations, created_at)
+        VALUES (#{title}, #{content}, #{author}, #{boardType}, 0, 0, NOW());
+    </insert>
+
+    <select id="findByBoardType"
+            parameterType="string"
+            resultType="com.persnal.persnal_backend.borad.domain.PostResponseDTO">
+        SELECT id, title, author, views, recommendations, created_at
+        FROM posts
+        WHERE board_type = #{boardType}
+        ORDER BY created_at DESC;
+    </select>
+
+    <select id="findRow"
+            parameterType="java.util.HashMap"
+            resultType="com.persnal.persnal_backend.borad.domain.PostResponseDTO">
+        SELECT id, title, author, created_at, views, recommendations, content
+        FROM posts
+        WHERE id = #{id};
+    </select>
+    
+    <update id="incrementRow" 
+            parameterType="int">
+        UPDATE posts
+        SET views = views + 1
+        WHERE id = #{id};
+    </update>
+
+    <update id="incrementLikeRow"
+            parameterType="int">
+        UPDATE posts
+        SET recommendations = recommendations + 1
+        WHERE id = #{id};
+    </update>
+
+        <insert id="saveComment" 
+                parameterType="com.persnal.persnal_backend.borad.domain.comment.CommentRequestDTO">
+        INSERT INTO comments (post_id, author, comment, created_at)
+        VALUES (#{postId}, #{author}, #{comment}, NOW());
+    </insert>
+
+    <select id="findCommentsByPostId" 
+            parameterType="int"
+            resultType="com.persnal.persnal_backend.borad.domain.comment.CommentResponseDTO">
+        SELECT id, author, comment, created_at
+        FROM comments
+        WHERE post_id = #{postId}
+        ORDER BY created_at ASC;
+    </select>
+
+    <delete id="deletePostById" 
+            parameterType="int">
+        DELETE FROM posts
+        WHERE id = #{id}
+    </delete>
+</mapper>
